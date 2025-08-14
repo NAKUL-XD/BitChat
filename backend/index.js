@@ -15,7 +15,7 @@ console.log("✅ FRONTEND_URL loaded as:", process.env.FRONTEND_URL);
 
 
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 const app = express();
 
 const corsOptions = {
