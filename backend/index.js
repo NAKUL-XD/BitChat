@@ -16,8 +16,23 @@ console.log("✅ FRONTEND_URL loaded as:", process.env.FRONTEND_URL);
 const PORT = process.env.PORT || 5000;
 const app = express();
 
+// ✅ Allow multiple origins (local + production)
+const allowedOrigins = [
+  'http://localhost:5173',                  // Local frontend
+  'https://bit-chat-beta.vercel.app',       // Your deployed frontend
+  process.env.FRONTEND_URL                  // From .env
+];
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like Postman) or from allowed origins
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log(`❌ CORS blocked request from: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 };
 app.use(cors(corsOptions));
@@ -40,8 +55,8 @@ app.use((req, res, next) => {
 });
 
 // ✅ Default root route
-app.get("/", (req, res) => {
-  res.send("🚀 Backend is running and ready for API calls!");
+app.get('/', (req, res) => {
+  res.send('🚀 Backend is running and ready for API calls!');
 });
 
 // routes
